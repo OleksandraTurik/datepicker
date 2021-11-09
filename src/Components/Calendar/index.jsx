@@ -60,9 +60,17 @@ justify-content: center;
 margin: 0 0 20px 0;
 `
 
+const Flex_jw = styled.div `
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin: 0 0 20px 0;
+`
+
 const Input = styled.input `
-max-width: 90px;
+max-width: 80px;
 margin: 10px;
+text-align: center;
 `
 
 const SpanLine = styled.span `
@@ -86,6 +94,8 @@ const Calendar = ({
     
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const [rangeDate, setRangeDate] = useState(null);
+    const [type, setType] = useState('simple');
+
     let currentDate = dayjs();
 
     const dt = dayjs()
@@ -111,24 +121,42 @@ const Calendar = ({
     }
     
     const handleDayClick = date => {
-        
-        if (selectedDate && rangeDate) {
-            setSelectedDate(date)
-            setRangeDate(null)
-            onChange(date)
-            return 
+        if (type == 'range') {
+            if (selectedDate && rangeDate) {
+                setSelectedDate(date)
+                setRangeDate(null)
+                onChange(date)
+                return 
+            } else {
+                setRangeDate(date)
+                onChange(date)
+                return
+            }
         } else {
-            setRangeDate(date)
-            onChange(date)
-            return
+            setSelectedDate(date)
         }
+
     }; 
+
+    const onChangeValue = (e) => {
+        setType(e.target.value);
+    }
     
     const monthData = calendarE.getMonthData(cdate.year(), cdate.month());
     
     return (
       <div className="calendar">
-          <Flex className="flex">
+            <Flex_jw className="flex-jw" onChange={(e) => onChangeValue(e)}>
+                <div>
+                    <input type="radio" value="simple" defaultChecked name="hradio" id="single" />
+                    <label htmlFor="single">Single</label>                    
+                </div>
+                <div>
+                    <input type="radio" value="range" name="hradio" id="range" />
+                    <label htmlFor="range">Range</label>                    
+                </div>
+            </Flex_jw>
+            <Flex className="flex">
                 {dt && <Input readOnly value={selectedDate.format('YYYY.MM.DD')} /> }                 
                 {rangeDate && <SpanLine></SpanLine>}
                 {rangeDate && <Input readOnly value={rangeDate.format('YYYY.MM.DD')} /> }
